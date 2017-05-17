@@ -5,10 +5,10 @@
 #include <QWidget>
 #include <QSize>
 
-#define SAVE_PATH "./ÕÕÆ¬/" //±£´æÂ·¾¶
-#define TEMP_DIR "./temp/" //»º´æÂ·¾¶
-#define TEMP_FILE_NAME "temp.png" //»º´æÃû³Æ
-#define TIMER_CYCLE 24 //¶¨Ê±Æ÷ÖÜÆÚ
+#define SAVE_PATH "./ç…§ç‰‡/" //ä¿å­˜è·¯å¾„
+#define TEMP_DIR "./temp/" //ç¼“å­˜è·¯å¾„
+#define TEMP_FILE_NAME "temp" //ç¼“å­˜åç§°
+#define TIMER_CYCLE 24 //å®šæ—¶å™¨å‘¨æœŸ
 
 class QImage;
 class QCamera;
@@ -16,19 +16,19 @@ class QCameraViewfinderSettings;
 class QCameraImageCapture;
 class QTimer;
 
-//ÆÁÄ»·½Ïò
+//å±å¹•æ–¹å‘
 typedef enum ScreenDirationEnum
 {
 	HOR_SCRREN = 0,
 	VER_SCRREN = 1
 } SCREEN_DIR;
 
-//ÉãÏñÍ·²ÎÊı
+//æ‘„åƒå¤´å‚æ•°
 typedef struct CameraParameterStruct
 {
-	int nMinFrame;//×îĞ¡Ö¡ÂÊ
-	int nMaxFrame;//×î´óÖ¡ÂÊ
-	QSize sizeResolution;//·Ö±æÂÊ
+	int nMinFrame;//æœ€å°å¸§ç‡
+	int nMaxFrame;//æœ€å¤§å¸§ç‡
+	QSize sizeResolution;//åˆ†è¾¨ç‡
 
 	CameraParameterStruct()
 	{
@@ -53,31 +53,31 @@ public:
     explicit CamareWin(QWidget *parent = 0);
     ~CamareWin();
 
-	void setScreenDir(SCREEN_DIR dir = HOR_SCRREN);//ÉèÖÃÆÁÄ»·½Ïò,Ä¬ÈÏÎªºáÆÁ
-    void startCamera();//¿ªÆôÉãÏñÍ·
-	void stopCamera();//Í£Ö¹ÉãÏñÍ·
-	void takePhoto();//ÕÕÏà
-	void resTakePhoto();//ÖØÕÕ
-	void clearImagePath();//Çå³ıÂ·¾¶
-	void removeImage();//Çå³ıÍ¼Æ¬
-	QString getImagePath();//»ñÈ¡Í¼Æ¬Â·¾¶
-	void setCameraSettings(CAMERA_PARAM settings);//ÉèÖÃÉãÏñÍ·²ÎÊı
-	QList<CAMERA_PARAM> getCameraSupportSettings();//»ñÈ¡ÉãÏñÍ·ËùÓĞ²ÎÊı
+	void setScreenDir(SCREEN_DIR dir = HOR_SCRREN);//è®¾ç½®å±å¹•æ–¹å‘,é»˜è®¤ä¸ºæ¨ªå±
+    void startCamera();//å¼€å¯æ‘„åƒå¤´
+	void stopCamera();//åœæ­¢æ‘„åƒå¤´
+	void takePhoto();//ç…§ç›¸
+	void resTakePhoto();//é‡ç…§
+	void clearImagePath();//æ¸…é™¤è·¯å¾„
+	void removeImage();//æ¸…é™¤å›¾ç‰‡
+	QString getImagePath();//è·å–å›¾ç‰‡è·¯å¾„
+	void setCameraSettings(CAMERA_PARAM settings);//è®¾ç½®æ‘„åƒå¤´å‚æ•°
+	QList<CAMERA_PARAM> getCameraSupportSettings();//è·å–æ‘„åƒå¤´æ‰€æœ‰å‚æ•°
 signals:
-	void signalCameraOpen(bool);//ÉãÏñÍ·´ò¿ªĞÅºÅ
+	void signalCameraOpen(bool);//æ‘„åƒå¤´æ‰“å¼€ä¿¡å·
 protected:
-	void initialize();//³õÊ¼»¯
-	QImage cutImage(QImage src);//²Ã¼ôÍ¼Æ¬£¬´ÓºáÆÁ½Ø³ÉÊúÆÁ
+	void initialize();//åˆå§‹åŒ–
+	QImage cutImage(QImage src);//è£å‰ªå›¾ç‰‡ï¼Œä»æ¨ªå±æˆªæˆç«–å±
 protected slots:
-	void slotDisplayImage(int,QImage);//ÏÔÊ¾Ã¿ÕÅÍ¼Æ¬
-	void slotTimeOut();//¼ÆÊ±Æ÷½áÊø
+	void slotDisplayImage(int,QImage);//æ˜¾ç¤ºæ¯å¼ å›¾ç‰‡
+	void slotTimeOut();//è®¡æ—¶å™¨ç»“æŸ
 private:
 	QCamera* m_pCamera;
 	QCameraImageCapture* m_pCapture;
-	QTimer* m_pTimer;//¶¨Ê±Æ÷
-	SCREEN_DIR m_dirScreen;//ÆÁÄ»·½Ïò
-	QString m_strPath;//Í¼Æ¬Â·¾¶
-	QImage m_image;//Í¼Æ¬
+	QTimer* m_pTimer;//å®šæ—¶å™¨
+	SCREEN_DIR m_dirScreen;//å±å¹•æ–¹å‘
+	QString m_strPath;//å›¾ç‰‡è·¯å¾„
+	QImage m_image;//å›¾ç‰‡
 
 };
 
