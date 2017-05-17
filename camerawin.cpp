@@ -35,7 +35,7 @@ void CamareWin::startCamera()
 	{
 		m_pTimer->start(TIMER_CYCLE);
 	}
-	if (m_pCamera->isAvailable())
+	if (!m_pCamera->isAvailable())
 	{
 		m_pCamera->start();
 	}
@@ -43,12 +43,12 @@ void CamareWin::startCamera()
 
 void CamareWin::stopCamera()
 {
-	if (!m_pTimer->isActive() )
+	if (m_pTimer->isActive() )
 	{
 		m_pTimer->stop();
 	}
 
-	if (!m_pCamera->isAvailable())
+	if (m_pCamera->isAvailable())
 	{
 		m_pCamera->stop();
 	}
@@ -139,7 +139,7 @@ void CamareWin::initialize()
 	m_pCamera->setCaptureMode(QCamera::CaptureStillImage);
 	m_pCamera->start();
 
-	//¶¨Ê±Æ÷
+	//å®šæ—¶å™¨
 	m_pTimer = new QTimer(this);
 	connect(m_pTimer, SIGNAL(timeout()), this, SLOT(slotTimeOut()));
 	if (!m_pCamera->isAvailable())
@@ -147,7 +147,7 @@ void CamareWin::initialize()
 		emit signalCameraOpen(false);
 		return;
 	}
-	//ÅÐ¶Ï»º´æÄ¿Â¼ÊÇ·ñ´æÔÚ£¬²»´æÔÚÔò´´½¨
+	//åˆ¤æ–­ç¼“å­˜ç›®å½•æ˜¯å¦å­˜åœ¨ï¼Œä¸å­˜åœ¨åˆ™åˆ›å»º
 	QDir dir;
 	if (!dir.exists(TEMP_DIR))
 	{
@@ -166,8 +166,8 @@ QImage CamareWin::cutImage(QImage src)
 	QImage resImage;
 	int nOldW = 0;
 	int nOldH = 0;
-	int nScaledW = 0;//Ëõ·ÅµÄ¿í¶È
-	int nScaledH = 0;//Ëõ·ÅµÄ¸ß¶È
+	int nScaledW = 0;//ç¼©æ”¾çš„å®½åº¦
+	int nScaledH = 0;//ç¼©æ”¾çš„é«˜åº¦
 	int nWinW = 0;
 	int nWinH = 0;
 	int x = 0;
@@ -180,36 +180,36 @@ QImage CamareWin::cutImage(QImage src)
 
 	switch (m_dirScreen)
 	{
-		//ÊúÆÁ
+		//ç«–å±
 	case VER_SCRREN:
 	{
 		if (nOldW/nOldH*1.0 > nWinW/nWinH*1.0)
 		{
 			nScaledH = nWinH;
-			nScaledW = nWinH / nOldH * nOldW;//µÃµ½ÄÜ¸²¸ÇÕû¸ö´°¿ÚµÄÕÕÆ¬µÄ´óÐ¡
+			nScaledW = nWinH / nOldH * nOldW;//å¾—åˆ°èƒ½è¦†ç›–æ•´ä¸ªçª—å£çš„ç…§ç‰‡çš„å¤§å°
 			x = (nScaledW - nWinW) / 2;
 		}
 		else
 		{
 			nScaledW = nWinW;
-			nScaledH = nWinW / nOldW * nOldH;//µÃµ½ÄÜ¸²¸ÇÕû¸ö´°¿ÚµÄÕÕÆ¬µÄ´óÐ¡
+			nScaledH = nWinW / nOldW * nOldH;//å¾—åˆ°èƒ½è¦†ç›–æ•´ä¸ªçª—å£çš„ç…§ç‰‡çš„å¤§å°
 			y = (nScaledH - nWinH) / 2;
 		}
 	}
 		break;
-		//ºáÆÁ
+		//æ¨ªå±
 	case HOR_SCRREN:
 	{
 		if (nOldH / nOldW*1.0 > nWinH / nWinW*1.0)
 		{
 			nScaledH = nWinH;
-			nScaledW = nWinH / nOldH * nOldW;//µÃµ½ÄÜ¸²¸ÇÕû¸ö´°¿ÚµÄÕÕÆ¬µÄ´óÐ¡
+			nScaledW = nWinH / nOldH * nOldW;//å¾—åˆ°èƒ½è¦†ç›–æ•´ä¸ªçª—å£çš„ç…§ç‰‡çš„å¤§å°
 			x = (nScaledW - nWinW) / 2;
 		}
 		else
 		{
 			nScaledW = nWinW;
-			nScaledH = nWinW / nOldW * nOldH;//µÃµ½ÄÜ¸²¸ÇÕû¸ö´°¿ÚµÄÕÕÆ¬µÄ´óÐ¡
+			nScaledH = nWinW / nOldW * nOldH;//å¾—åˆ°èƒ½è¦†ç›–æ•´ä¸ªçª—å£çš„ç…§ç‰‡çš„å¤§å°
 			y = (nScaledH - nWinH) / 2;
 		}
 	}
@@ -232,7 +232,7 @@ void CamareWin::slotDisplayImage(int, QImage img)
 
 void CamareWin::slotTimeOut()
 {
-	QDir temDir(TEMP_DIR);//pathÖÐ²»ÄÜ°üº¬ÖÐÎÄ
+	QDir temDir(TEMP_DIR);//pathä¸­ä¸èƒ½åŒ…å«ä¸­æ–‡
 	QString strDir = temDir.absolutePath();
 	m_pCapture->capture(strDir + TEMP_FILE_NAME);
 }
