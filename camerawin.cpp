@@ -234,5 +234,5 @@ void CamareWin::slotTimeOut()
 {
 	QDir temDir(TEMP_DIR);//path中不能包含中文
 	QString strDir = temDir.absolutePath();
-	m_pCapture->capture(strDir + TEMP_FILE_NAME);
+	m_pCapture->capture(strDir + "/" + TEMP_FILE_NAME);
 }
