@@ -23,6 +23,15 @@ typedef enum ScreenDirationEnum
 	VER_SCRREN = 1
 } SCREEN_DIR;
 
+//镜像方向
+typedef enum ImageMirrorDirEnum
+{
+	NO_MIRROR = 0,
+	HOR_MIRROR,
+	VER_MIRROR
+} IMAGE_MIRROR;
+
+
 //摄像头参数
 typedef struct CameraParameterStruct
 {
@@ -54,6 +63,7 @@ public:
     ~CamareWin();
 
 	void setScreenDir(SCREEN_DIR dir = HOR_SCRREN);//设置屏幕方向,默认为横屏
+	void setImageMirror(IMAGE_MIRROR mirror = NO_MIRROR);//设置图片镜像参数，默认不镜像
     void startCamera();//开启摄像头
 	void stopCamera();//停止摄像头
 	void takePhoto();//照相
@@ -76,6 +86,7 @@ private:
 	QCameraImageCapture* m_pCapture;
 	QTimer* m_pTimer;//定时器
 	SCREEN_DIR m_dirScreen;//屏幕方向
+	IMAGE_MIRROR m_imgMirror;//图片镜像
 	QString m_strPath;//图片路径
 	QImage m_image;//图片
 
