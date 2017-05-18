@@ -6,7 +6,7 @@
 #include <QTimer>
 #include <QDir>
 #include <QDateTime>
-
+#include <QDebug>
 CamareWin::CamareWin(QWidget *parent) :
     QWidget(parent)
 {
@@ -14,6 +14,7 @@ CamareWin::CamareWin(QWidget *parent) :
 	m_pCapture = NULL;
 	m_pTimer = NULL;
 	m_dirScreen = HOR_SCRREN;
+	m_imgMirror = NO_MIRROR;
     setupUi(this);
 
 	initialize();
@@ -21,12 +22,17 @@ CamareWin::CamareWin(QWidget *parent) :
 
 CamareWin::~CamareWin()
 {
-
+	stopCamera();
 }
 
 void CamareWin::setScreenDir(SCREEN_DIR dir /* = HOR_SCRREN */)
 {
 	m_dirScreen = dir;
+}
+
+void CamareWin::setImageMirror(IMAGE_MIRROR mirror /* = NO_MIRROR */)
+{
+	m_imgMirror = mirror;
 }
 
 void CamareWin::startCamera()
@@ -35,10 +41,8 @@ void CamareWin::startCamera()
 	{
 		m_pTimer->start(TIMER_CYCLE);
 	}
-	if (!m_pCamera->isAvailable())
-	{
-		m_pCamera->start();
-	}
+
+	m_pCamera->start();
 }
 
 void CamareWin::stopCamera()
@@ -137,7 +141,6 @@ void CamareWin::initialize()
 	m_pCapture = new QCameraImageCapture(m_pCamera);
 	connect(m_pCapture, SIGNAL(imageCaptured(int, QImage)), this, SLOT(slotDisplayImage(int, QImage)));
 	m_pCamera->setCaptureMode(QCamera::CaptureStillImage);
-	m_pCamera->start();
 
 	//定时器
 	m_pTimer = new QTimer(this);
@@ -183,16 +186,16 @@ QImage CamareWin::cutImage(QImage src)
 		//竖屏
 	case VER_SCRREN:
 	{
-		if (nOldW/nOldH*1.0 > nWinW/nWinH*1.0)
+		if (nWinW / (nWinH*1.0) < nOldW/(nOldH*1.0) )
 		{
 			nScaledH = nWinH;
-			nScaledW = nWinH / nOldH * nOldW;//得到能覆盖整个窗口的照片的大小
+			nScaledW = (nWinH / (nOldH*1.0)) * nOldW;//得到能覆盖整个窗口的照片的大小
 			x = (nScaledW - nWinW) / 2;
 		}
 		else
 		{
 			nScaledW = nWinW;
-			nScaledH = nWinW / nOldW * nOldH;//得到能覆盖整个窗口的照片的大小
+			nScaledH = (nWinW / (nOldW*1.0)) * nOldH;//得到能覆盖整个窗口的照片的大小
 			y = (nScaledH - nWinH) / 2;
 		}
 	}
@@ -200,16 +203,16 @@ QImage CamareWin::cutImage(QImage src)
 		//横屏
 	case HOR_SCRREN:
 	{
-		if (nOldH / nOldW*1.0 > nWinH / nWinW*1.0)
+		if (nWinW/(nWinH*1.0) < nOldW/(nOldH*1.0))
 		{
 			nScaledH = nWinH;
-			nScaledW = nWinH / nOldH * nOldW;//得到能覆盖整个窗口的照片的大小
+			nScaledW = (nWinH / (nOldH*1.0)) * nOldW;//得到能覆盖整个窗口的照片的大小
 			x = (nScaledW - nWinW) / 2;
 		}
 		else
 		{
 			nScaledW = nWinW;
-			nScaledH = nWinW / nOldW * nOldH;//得到能覆盖整个窗口的照片的大小
+			nScaledH = (nWinW / (nOldW*1.0))  * nOldH;//得到能覆盖整个窗口的照片的大小
 			y = (nScaledH - nWinH) / 2;
 		}
 	}
@@ -224,7 +227,22 @@ QImage CamareWin::cutImage(QImage src)
 
 void CamareWin::slotDisplayImage(int, QImage img)
 {
-	img = img.mirrored(true, false);
+	bool bHmirror = false;
+	bool bVmirror = false;
+	switch (m_imgMirror)
+	{
+	case NO_MIRROR:
+		break;
+	case HOR_MIRROR:
+		bHmirror = true;
+		break;
+	case VER_MIRROR:
+		bVmirror = true;
+		break;
+	default:
+		break;
+	}
+	img = img.mirrored(bHmirror, bVmirror);
 	img = cutImage(img);//img.scaled(m_pLabImage->size());//, Qt::KeepAspectRatio);
 	m_image = img;
 	m_pLabImage->setPixmap(QPixmap::fromImage(img));
@@ -234,5 +252,5 @@ void CamareWin::slotTimeOut()
 {
 	QDir temDir(TEMP_DIR);//path中不能包含中文
 	QString strDir = temDir.absolutePath();
-	m_pCapture->capture(strDir + "/" + TEMP_FILE_NAME);
+	m_pCapture->capture(strDir +"/"+ TEMP_FILE_NAME);
 }
